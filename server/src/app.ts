@@ -8,6 +8,7 @@ import tripRoutes from './routes/trip';
 import maintenanceRoutes from './routes/maintenance';
 import fuelRoutes from './routes/fuel';
 import expenseRoutes from './routes/expense';
+import dashboardRoutes from './routes/dashboard';
 import { errorHandler } from './middleware/errorHandler';
 
 const app = express();
@@ -44,6 +45,7 @@ app.use('/api/trips', tripRoutes);
 app.use('/api/maintenance', maintenanceRoutes);
 app.use('/api/fuel-logs', fuelRoutes);
 app.use('/api/expenses', expenseRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 // Centralized error handler (must be last)
 app.use(errorHandler);
