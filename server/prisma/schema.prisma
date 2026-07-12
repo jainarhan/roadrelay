@@ -108,6 +108,7 @@ model MaintenanceLog {
   id          String   @id @default(uuid())
   vehicleId   String
   description String
+  cost        Float    @default(0)
   active      Boolean  @default(true)
   openedAt    DateTime @default(now())
   closedAt    DateTime?

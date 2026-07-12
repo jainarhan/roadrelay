@@ -11,10 +11,8 @@ import { Drivers } from './pages/Drivers';
 import { Trips } from './pages/Trips';
 import { Maintenance } from './pages/Maintenance';
 import { FuelExpenses } from './pages/FuelExpenses';
+import { Reports } from './pages/Reports';
 import { Unauthorized } from './pages/Unauthorized';
-import {
-  ReportsPlaceholder,
-} from './pages/Placeholders';
 
 const queryClient = new QueryClient();
 
@@ -124,7 +122,7 @@ const App: React.FC = () => {
                 path="/reports"
                 element={
                   <ProtectedRoute roles={['FLEET_MANAGER', 'FINANCIAL_ANALYST']}>
-                    <ReportsPlaceholder />
+                    <Reports />
                   </ProtectedRoute>
                 }
               />
