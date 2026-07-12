@@ -9,9 +9,9 @@ import { Dashboard } from './pages/Dashboard';
 import { Vehicles } from './pages/Vehicles';
 import { Drivers } from './pages/Drivers';
 import { Trips } from './pages/Trips';
+import { Maintenance } from './pages/Maintenance';
 import { Unauthorized } from './pages/Unauthorized';
 import {
-  MaintenancePlaceholder,
   FuelExpensesPlaceholder,
   ReportsPlaceholder,
 } from './pages/Placeholders';
@@ -106,7 +106,7 @@ const App: React.FC = () => {
                 path="/maintenance"
                 element={
                   <ProtectedRoute roles={['FLEET_MANAGER', 'SAFETY_OFFICER']}>
-                    <MaintenancePlaceholder />
+                    <Maintenance />
                   </ProtectedRoute>
                 }
               />

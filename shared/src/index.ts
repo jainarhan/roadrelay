@@ -93,14 +93,21 @@ export const createTripSchema = z.object({
   driverId: z.string().uuid('Invalid driver selection'),
   cargoWeight: z.number().positive('Cargo weight must be a positive number').max(100000, 'Cargo weight cannot exceed 100,000 kg'),
   plannedDistance: z.number().positive('Planned distance must be a positive number').max(10000, 'Planned distance cannot exceed 10,000 km'),
-  revenue: z.number().positive('Revenue must be positive').max(1000000, 'Revenue cannot exceed $1,000,000').optional(),
+  revenue: z.number().positive('Revenue must be positive').max(100000000, 'Revenue cannot exceed $100,000,000').optional(),
 });
 
 export type CreateTripInput = z.infer<typeof createTripSchema>;
 
 export const completeTripSchema = z.object({
   odometerEnd: z.number().positive('Odometer reading must be a positive number').max(10000000, 'Odometer reading cannot exceed 10,000,000 km'),
-  revenue: z.number().positive('Revenue must be positive').max(1000000, 'Revenue cannot exceed $1,000,000').optional(),
+  revenue: z.number().positive('Revenue must be positive').max(100000000, 'Revenue cannot exceed $100,000,000').optional(),
 });
 
 export type CompleteTripInput = z.infer<typeof completeTripSchema>;
+
+export const createMaintenanceSchema = z.object({
+  vehicleId: z.string().uuid('Invalid vehicle selection'),
+  description: z.string().trim().min(1, 'Description is required').max(500, 'Description cannot exceed 500 characters'),
+});
+
+export type CreateMaintenanceInput = z.infer<typeof createMaintenanceSchema>;

@@ -3,9 +3,10 @@ import {
   createVehicleService,
   getVehiclesService,
   updateVehicleService,
+  retireVehicleService,
 } from '../../src/services/vehicle';
 import { prisma } from '../../src/prisma';
-import { ConflictError, NotFoundError } from '../../src/utils/errors';
+import { ConflictError, NotFoundError, BadRequestError } from '../../src/utils/errors';
 import { VehicleStatus } from '@prisma/client';
 
 // Mock the prisma client
@@ -16,6 +17,7 @@ vi.mock('../../src/prisma', () => ({
       findMany: vi.fn(),
       create: vi.fn(),
       update: vi.fn(),
+      updateMany: vi.fn(),
     },
   },
 }));
@@ -143,6 +145,36 @@ describe('Vehicle Service', () => {
       (prisma.vehicle.findUnique as any).mockResolvedValue(null);
 
       await expect(updateVehicleService('invalid-id', { name: 'Test' })).rejects.toThrow(NotFoundError);
+    });
+  });
+
+  describe('retireVehicleService', () => {
+    it('should successfully retire an AVAILABLE vehicle', async () => {
+      (prisma.vehicle.findUnique as any).mockResolvedValueOnce({ id: 'vehicle-123', status: VehicleStatus.AVAILABLE });
+      (prisma.vehicle.updateMany as any).mockResolvedValue({ count: 1 });
+      (prisma.vehicle.findUnique as any).mockResolvedValueOnce({ id: 'vehicle-123', status: VehicleStatus.RETIRED });
+
+      const result = await retireVehicleService('vehicle-123');
+
+      expect(result).toBeDefined();
+      expect(result?.status).toBe(VehicleStatus.RETIRED);
+      expect(prisma.vehicle.updateMany).toHaveBeenCalledWith({
+        where: { id: 'vehicle-123', status: VehicleStatus.AVAILABLE },
+        data: { status: VehicleStatus.RETIRED },
+      });
+    });
+
+    it('should reject retirement if the vehicle is not AVAILABLE', async () => {
+      (prisma.vehicle.findUnique as any).mockResolvedValue({ id: 'vehicle-123', status: VehicleStatus.ON_TRIP });
+
+      await expect(retireVehicleService('vehicle-123')).rejects.toThrow(BadRequestError);
+      expect(prisma.vehicle.updateMany).not.toHaveBeenCalled();
+    });
+
+    it('should throw NotFoundError if the vehicle does not exist', async () => {
+      (prisma.vehicle.findUnique as any).mockResolvedValue(null);
+
+      await expect(retireVehicleService('invalid-id')).rejects.toThrow(NotFoundError);
     });
   });
 });

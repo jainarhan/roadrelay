@@ -74,6 +74,16 @@ export const Vehicles: React.FC = () => {
     },
   });
 
+  const retireMutation = useMutation({
+    mutationFn: (id: string) => api.post(`/vehicles/${id}/retire`, {}),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['vehicles'] });
+    },
+    onError: (err: ApiError) => {
+      alert(err.message || 'Failed to retire vehicle');
+    },
+  });
+
   const openAddModal = () => {
     setEditingVehicle(null);
     setSubmitError(null);
@@ -190,13 +200,23 @@ export const Vehicles: React.FC = () => {
                       <td className="px-6 py-4 text-right text-gray-900 border-r border-gray-200">${v.acquisitionCost.toLocaleString()}</td>
                       <td className="px-6 py-4 text-center border-r border-gray-200">{getStatusBadge(v.status)}</td>
                       <td className="px-6 py-4 text-center">
-                        <button
-                          onClick={() => openEditModal(v)}
-                          className="inline-flex items-center gap-1 border border-gray-300 bg-white px-2.5 py-1 text-xs font-semibold text-gray-700 hover:bg-gray-50"
-                        >
-                          <Edit2 className="h-3. w-3" />
-                          EDIT
-                        </button>
+                        <div className="flex items-center justify-center gap-1.5">
+                          <button
+                            onClick={() => openEditModal(v)}
+                            className="inline-flex items-center gap-1 border border-gray-300 bg-white px-2.5 py-1 text-xs font-semibold text-gray-700 hover:bg-gray-50"
+                          >
+                            <Edit2 className="h-3 w-3" />
+                            EDIT
+                          </button>
+                          {v.status === 'AVAILABLE' && (
+                            <button
+                              onClick={() => retireMutation.mutate(v.id)}
+                              className="inline-flex items-center gap-1 border border-red-300 bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-700 hover:bg-red-100"
+                            >
+                              RETIRE
+                            </button>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))

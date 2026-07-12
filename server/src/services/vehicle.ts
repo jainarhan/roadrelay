@@ -1,5 +1,5 @@
 import { prisma } from '../prisma';
-import { ConflictError, NotFoundError } from '../utils/errors';
+import { ConflictError, NotFoundError, BadRequestError } from '../utils/errors';
 import { CreateVehicleInput, UpdateVehicleInput } from 'shared';
 import { VehicleStatus, Prisma } from '@prisma/client';
 
@@ -85,4 +85,29 @@ export async function updateVehicleService(id: string, input: UpdateVehicleInput
     }
     throw error;
   }
+}
+
+export async function retireVehicleService(id: string) {
+  const vehicle = await prisma.vehicle.findUnique({
+    where: { id },
+  });
+
+  if (!vehicle) {
+    throw new NotFoundError('Vehicle not found');
+  }
+
+  if (vehicle.status !== VehicleStatus.AVAILABLE) {
+    throw new BadRequestError('Only AVAILABLE vehicles can be retired');
+  }
+
+  const result = await prisma.vehicle.updateMany({
+    where: { id, status: VehicleStatus.AVAILABLE },
+    data: { status: VehicleStatus.RETIRED },
+  });
+
+  if (result.count === 0) {
+    throw new BadRequestError('Vehicle is no longer available to be retired — status changed');
+  }
+
+  return prisma.vehicle.findUnique({ where: { id } });
 }

@@ -174,17 +174,30 @@ describe('Trip Service', () => {
         driver: { id: 'driver-123' },
       };
 
-      (prisma.trip.findUnique as any).mockResolvedValue(mockTrip);
-      (prisma.trip.update as any).mockResolvedValue({ ...mockTrip, status: TripStatus.COMPLETED });
+      (prisma.trip.findUnique as any).mockResolvedValueOnce(mockTrip);
+      (prisma.trip.updateMany as any).mockResolvedValue({ count: 1 });
+      (prisma.vehicle.updateMany as any).mockResolvedValue({ count: 1 });
+      (prisma.driver.updateMany as any).mockResolvedValue({ count: 1 });
+      (prisma.trip.findUnique as any).mockResolvedValueOnce({ ...mockTrip, status: TripStatus.COMPLETED });
 
       const result = await completeTripService('trip-123', { odometerEnd: 1200 });
 
-      expect(prisma.vehicle.update).toHaveBeenCalledWith({
-        where: { id: 'vehicle-123' },
+      expect(result.status).toBe(TripStatus.COMPLETED);
+      expect(prisma.trip.updateMany).toHaveBeenCalledWith({
+        where: { id: 'trip-123', status: TripStatus.DISPATCHED },
+        data: {
+          status: TripStatus.COMPLETED,
+          completedAt: expect.any(Date),
+          odometerEnd: 1200,
+          revenue: undefined,
+        },
+      });
+      expect(prisma.vehicle.updateMany).toHaveBeenCalledWith({
+        where: { id: 'vehicle-123', status: VehicleStatus.ON_TRIP },
         data: { status: VehicleStatus.AVAILABLE, odometer: 1200 },
       });
-      expect(prisma.driver.update).toHaveBeenCalledWith({
-        where: { id: 'driver-123' },
+      expect(prisma.driver.updateMany).toHaveBeenCalledWith({
+        where: { id: 'driver-123', status: DriverStatus.ON_TRIP },
         data: { status: DriverStatus.AVAILABLE },
       });
     });
@@ -214,17 +227,24 @@ describe('Trip Service', () => {
         driverId: 'driver-123',
       };
 
-      (prisma.trip.findUnique as any).mockResolvedValue(mockTrip);
-      (prisma.trip.update as any).mockResolvedValue({ ...mockTrip, status: TripStatus.CANCELLED });
+      (prisma.trip.findUnique as any).mockResolvedValueOnce(mockTrip);
+      (prisma.trip.updateMany as any).mockResolvedValue({ count: 1 });
+      (prisma.vehicle.updateMany as any).mockResolvedValue({ count: 1 });
+      (prisma.driver.updateMany as any).mockResolvedValue({ count: 1 });
+      (prisma.trip.findUnique as any).mockResolvedValueOnce({ ...mockTrip, status: TripStatus.CANCELLED });
 
       await cancelTripService('trip-123');
 
-      expect(prisma.vehicle.update).toHaveBeenCalledWith({
-        where: { id: 'vehicle-123' },
+      expect(prisma.trip.updateMany).toHaveBeenCalledWith({
+        where: { id: 'trip-123', status: { in: [TripStatus.DRAFT, TripStatus.DISPATCHED] } },
+        data: { status: TripStatus.CANCELLED },
+      });
+      expect(prisma.vehicle.updateMany).toHaveBeenCalledWith({
+        where: { id: 'vehicle-123', status: VehicleStatus.ON_TRIP },
         data: { status: VehicleStatus.AVAILABLE },
       });
-      expect(prisma.driver.update).toHaveBeenCalledWith({
-        where: { id: 'driver-123' },
+      expect(prisma.driver.updateMany).toHaveBeenCalledWith({
+        where: { id: 'driver-123', status: DriverStatus.ON_TRIP },
         data: { status: DriverStatus.AVAILABLE },
       });
     });

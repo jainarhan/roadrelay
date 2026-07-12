@@ -5,6 +5,7 @@ import authRoutes from './routes/auth';
 import vehicleRoutes from './routes/vehicle';
 import driverRoutes from './routes/driver';
 import tripRoutes from './routes/trip';
+import maintenanceRoutes from './routes/maintenance';
 import { errorHandler } from './middleware/errorHandler';
 
 const app = express();
@@ -38,6 +39,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/vehicles', vehicleRoutes);
 app.use('/api/drivers', driverRoutes);
 app.use('/api/trips', tripRoutes);
+app.use('/api/maintenance', maintenanceRoutes);
 
 // Centralized error handler (must be last)
 app.use(errorHandler);

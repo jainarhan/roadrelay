@@ -3,6 +3,7 @@ import {
   createVehicleService,
   getVehiclesService,
   updateVehicleService,
+  retireVehicleService,
 } from '../services/vehicle';
 
 export async function createVehicle(req: Request, res: Response, next: NextFunction) {
@@ -34,6 +35,19 @@ export async function updateVehicle(req: Request, res: Response, next: NextFunct
   try {
     const { id } = req.params;
     const vehicle = await updateVehicleService(id, req.body);
+    return res.status(200).json({
+      status: 'success',
+      vehicle,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function retireVehicle(req: Request, res: Response, next: NextFunction) {
+  try {
+    const { id } = req.params;
+    const vehicle = await retireVehicleService(id);
     return res.status(200).json({
       status: 'success',
       vehicle,
