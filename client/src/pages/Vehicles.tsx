@@ -37,7 +37,6 @@ export const Vehicles: React.FC = () => {
     register,
     handleSubmit,
     reset,
-    setValue,
     formState: { errors },
   } = useForm<CreateVehicleInput>({
     resolver: zodResolver(editingVehicle ? updateVehicleSchema : createVehicleSchema),
@@ -48,7 +47,6 @@ export const Vehicles: React.FC = () => {
       maxLoadCapacity: 0,
       odometer: 0,
       acquisitionCost: 0,
-      status: 'AVAILABLE',
     },
   });
 
@@ -86,7 +84,6 @@ export const Vehicles: React.FC = () => {
       maxLoadCapacity: undefined,
       odometer: 0,
       acquisitionCost: undefined,
-      status: 'AVAILABLE',
     });
     setIsModalOpen(true);
   };
@@ -101,7 +98,6 @@ export const Vehicles: React.FC = () => {
       maxLoadCapacity: vehicle.maxLoadCapacity,
       odometer: vehicle.odometer,
       acquisitionCost: vehicle.acquisitionCost,
-      status: vehicle.status,
     });
     setIsModalOpen(true);
   };
@@ -335,23 +331,7 @@ export const Vehicles: React.FC = () => {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-wider text-gray-700">
-                  Status
-                </label>
-                <select
-                  {...register('status')}
-                  className="mt-1 block w-full border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-black focus:outline-none"
-                >
-                  <option value="AVAILABLE">Available</option>
-                  <option value="ON_TRIP">On Trip</option>
-                  <option value="IN_SHOP">In Shop</option>
-                  <option value="RETIRED">Retired</option>
-                </select>
-                {errors.status && (
-                  <p className="mt-1 text-xs text-red-600 font-medium">{errors.status.message}</p>
-                )}
-              </div>
+
 
               <div className="flex justify-end gap-2 pt-4 border-t border-gray-200">
                 <button

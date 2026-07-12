@@ -2,7 +2,7 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { RoleGate } from './RoleGate';
-import { LayoutDashboard, Truck, Users, MapPin, Wrench, Fuel, BarChart3, LogOut, ShieldAlert } from 'lucide-react';
+import { LayoutDashboard, Truck, Users, MapPin, Wrench, Fuel, BarChart3, LogOut } from 'lucide-react';
 
 export const Sidebar: React.FC = () => {
   const { user, logout } = useAuth();

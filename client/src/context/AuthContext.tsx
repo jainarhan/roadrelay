@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { api, ApiError } from '../lib/api';
+import { api } from '../lib/api';
 import { Role } from 'shared';
 
 export interface User {

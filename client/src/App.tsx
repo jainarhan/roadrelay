@@ -7,10 +7,10 @@ import { Sidebar } from './components/Sidebar';
 import { Login } from './pages/Login';
 import { Dashboard } from './pages/Dashboard';
 import { Vehicles } from './pages/Vehicles';
+import { Drivers } from './pages/Drivers';
+import { Trips } from './pages/Trips';
 import { Unauthorized } from './pages/Unauthorized';
 import {
-  DriversPlaceholder,
-  TripsPlaceholder,
   MaintenancePlaceholder,
   FuelExpensesPlaceholder,
   ReportsPlaceholder,
@@ -88,7 +88,7 @@ const App: React.FC = () => {
                 path="/drivers"
                 element={
                   <ProtectedRoute roles={['FLEET_MANAGER', 'SAFETY_OFFICER']}>
-                    <DriversPlaceholder />
+                    <Drivers />
                   </ProtectedRoute>
                 }
               />
@@ -97,7 +97,7 @@ const App: React.FC = () => {
                 path="/trips"
                 element={
                   <ProtectedRoute roles={['FLEET_MANAGER']}>
-                    <TripsPlaceholder />
+                    <Trips />
                   </ProtectedRoute>
                 }
               />

@@ -1,7 +1,7 @@
 import { prisma } from '../prisma';
 import { ConflictError, NotFoundError } from '../utils/errors';
 import { CreateVehicleInput, UpdateVehicleInput } from 'shared';
-import { VehicleStatus } from '@prisma/client';
+import { VehicleStatus, Prisma } from '@prisma/client';
 
 export async function createVehicleService(input: CreateVehicleInput) {
   const existing = await prisma.vehicle.findUnique({
@@ -12,17 +12,24 @@ export async function createVehicleService(input: CreateVehicleInput) {
     throw new ConflictError('Vehicle registration number already exists');
   }
 
-  return prisma.vehicle.create({
-    data: {
-      regNumber: input.regNumber,
-      name: input.name,
-      type: input.type,
-      maxLoadCapacity: input.maxLoadCapacity,
-      odometer: input.odometer,
-      acquisitionCost: input.acquisitionCost,
-      status: input.status as VehicleStatus,
-    },
-  });
+  try {
+    return await prisma.vehicle.create({
+      data: {
+        regNumber: input.regNumber,
+        name: input.name,
+        type: input.type,
+        maxLoadCapacity: input.maxLoadCapacity,
+        odometer: input.odometer,
+        acquisitionCost: input.acquisitionCost,
+        status: VehicleStatus.AVAILABLE, // Hardcoded default
+      },
+    });
+  } catch (error: any) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+      throw new ConflictError('Vehicle registration number already exists');
+    }
+    throw error;
+  }
 }
 
 export async function getVehiclesService(filters?: { dispatchable?: boolean }) {
@@ -59,16 +66,23 @@ export async function updateVehicleService(id: string, input: UpdateVehicleInput
     }
   }
 
-  return prisma.vehicle.update({
-    where: { id },
-    data: {
-      regNumber: input.regNumber,
-      name: input.name,
-      type: input.type,
-      maxLoadCapacity: input.maxLoadCapacity,
-      odometer: input.odometer,
-      acquisitionCost: input.acquisitionCost,
-      status: input.status as VehicleStatus,
-    },
-  });
+  try {
+    return await prisma.vehicle.update({
+      where: { id },
+      data: {
+        regNumber: input.regNumber,
+        name: input.name,
+        type: input.type,
+        maxLoadCapacity: input.maxLoadCapacity,
+        odometer: input.odometer,
+        acquisitionCost: input.acquisitionCost,
+        // Status is deliberately omitted here to prevent generic status modifications
+      },
+    });
+  } catch (error: any) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+      throw new ConflictError('Vehicle registration number already exists');
+    }
+    throw error;
+  }
 }
