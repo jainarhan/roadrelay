@@ -65,6 +65,30 @@ export const Trips: React.FC = () => {
   const dispatchableVehicles = vehiclesData?.vehicles || [];
   const dispatchableDrivers = driversData?.drivers || [];
 
+  // Search & Filter State
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('ALL');
+
+  // Client-side filtering via useMemo
+  const filteredTrips = React.useMemo(() => {
+    return trips.filter((t) => {
+      const matchesSearch =
+        t.source.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        t.destination.toLowerCase().includes(searchQuery.toLowerCase());
+
+      const matchesStatus = statusFilter === 'ALL' || t.status === statusFilter;
+
+      return matchesSearch && matchesStatus;
+    });
+  }, [trips, searchQuery, statusFilter]);
+
+  const isFilterActive = searchQuery !== '' || statusFilter !== 'ALL';
+
+  const clearFilters = () => {
+    setSearchQuery('');
+    setStatusFilter('ALL');
+  };
+
   // Create Form Config
   const createForm = useForm<CreateTripInput>({
     resolver: zodResolver(createTripSchema),
@@ -239,7 +263,48 @@ export const Trips: React.FC = () => {
       {isTripsLoading ? (
         <div className="py-12 text-center text-gray-500 font-medium">Loading transport logs...</div>
       ) : (
-        <div className="border border-gray-300 bg-white overflow-hidden shadow-sm">
+        <>
+          {/* Search & Filter Bar */}
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-4 border border-gray-300 bg-gray-50 p-4 shadow-sm">
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500">Search:</span>
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Source, destination..."
+                  className="border border-gray-300 bg-white px-3 py-1.5 text-xs text-gray-900 focus:border-black focus:outline-none w-48"
+                />
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500">Status:</span>
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="border border-gray-300 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 focus:border-black focus:outline-none"
+                >
+                  <option value="ALL">All Statuses</option>
+                  <option value="DRAFT">Scheduled (Draft)</option>
+                  <option value="DISPATCHED">Active (Dispatched)</option>
+                  <option value="COMPLETED">Completed</option>
+                  <option value="CANCELLED">Cancelled</option>
+                </select>
+              </div>
+            </div>
+
+            {isFilterActive && (
+              <button
+                onClick={clearFilters}
+                className="text-xs font-bold text-gray-600 hover:text-black uppercase tracking-wider underline underline-offset-4"
+              >
+                Clear Filters
+              </button>
+            )}
+          </div>
+
+          <div className="border border-gray-300 bg-white overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-sm">
               <thead>
@@ -261,8 +326,14 @@ export const Trips: React.FC = () => {
                       No logged trips. Create a trip schedule to start dispatching operations.
                     </td>
                   </tr>
+                ) : filteredTrips.length === 0 ? (
+                  <tr>
+                    <td colSpan={8} className="px-6 py-10 text-center text-gray-500 font-medium">
+                      No results match your filters.
+                    </td>
+                  </tr>
                 ) : (
-                  trips.map((t) => (
+                  filteredTrips.map((t) => (
                     <tr key={t.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 border-r border-gray-200">
                         <div className="font-semibold text-gray-900">{t.source}</div>
@@ -335,6 +406,7 @@ export const Trips: React.FC = () => {
             </table>
           </div>
         </div>
+      </>
       )}
 
       {/* CREATE MODAL */}

@@ -52,6 +52,34 @@ export const Maintenance: React.FC = () => {
   // Only show vehicles with status AVAILABLE in the maintenance selection list
   const eligibleVehicles = allVehicles.filter(v => v.status === 'AVAILABLE');
 
+  // Search & Filter State
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('ALL');
+
+  // Client-side filtering via useMemo
+  const filteredLogs = React.useMemo(() => {
+    return logs.filter((log) => {
+      const matchesSearch = log.description.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      let matchesStatus = true;
+      if (statusFilter === 'ACTIVE') {
+        matchesStatus = log.active === true;
+      } else if (statusFilter === 'CLOSED') {
+        matchesStatus = log.active === false;
+      }
+
+      return matchesSearch && matchesStatus;
+    });
+  }, [logs, searchQuery, statusFilter]);
+
+  const isFilterActive = searchQuery !== '' || statusFilter !== 'ALL' || selectedVehicleFilter !== 'ALL';
+
+  const clearFilters = () => {
+    setSearchQuery('');
+    setStatusFilter('ALL');
+    setSelectedVehicleFilter('ALL');
+  };
+
   const {
     register,
     handleSubmit,
@@ -152,23 +180,58 @@ export const Maintenance: React.FC = () => {
         </div>
       </div>
 
-      {/* Filter bar */}
-      <div className="mb-4 flex items-center gap-2">
-        <label className="text-[11px] font-semibold uppercase tracking-wider text-gray-700">
-          Filter by Vehicle:
-        </label>
-        <select
-          value={selectedVehicleFilter}
-          onChange={(e) => setSelectedVehicleFilter(e.target.value)}
-          className="border border-gray-300 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 focus:border-black focus:outline-none"
-        >
-          <option value="ALL">Show All Vehicles</option>
-          {allVehicles.map((v) => (
-            <option key={v.id} value={v.id}>
-              {v.name} ({v.regNumber})
-            </option>
-          ))}
-        </select>
+      {/* Search & Filter Bar */}
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-4 border border-gray-300 bg-gray-50 p-4 shadow-sm">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500">Search:</span>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Description..."
+              className="border border-gray-300 bg-white px-3 py-1.5 text-xs text-gray-900 focus:border-black focus:outline-none w-48"
+            />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500">Vehicle:</span>
+            <select
+              value={selectedVehicleFilter}
+              onChange={(e) => setSelectedVehicleFilter(e.target.value)}
+              className="border border-gray-300 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 focus:border-black focus:outline-none"
+            >
+              <option value="ALL">Show All Vehicles</option>
+              {allVehicles.map((v) => (
+                <option key={v.id} value={v.id}>
+                  {v.name} ({v.regNumber})
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500">Status:</span>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="border border-gray-300 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 focus:border-black focus:outline-none"
+            >
+              <option value="ALL">All Statuses</option>
+              <option value="ACTIVE">Active (In Shop)</option>
+              <option value="CLOSED">Closed (Completed)</option>
+            </select>
+          </div>
+        </div>
+
+        {isFilterActive && (
+          <button
+            onClick={clearFilters}
+            className="text-xs font-bold text-gray-600 hover:text-black uppercase tracking-wider underline underline-offset-4"
+          >
+            Clear Filters
+          </button>
+        )}
       </div>
 
       {isLogsLoading ? (
@@ -194,8 +257,14 @@ export const Maintenance: React.FC = () => {
                       No maintenance entries found.
                     </td>
                   </tr>
+                ) : filteredLogs.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-10 text-center text-gray-500 font-medium">
+                      No results match your filters.
+                    </td>
+                  </tr>
                 ) : (
-                  logs.map((log) => (
+                  filteredLogs.map((log) => (
                     <tr key={log.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 border-r border-gray-200">
                         <div className="font-semibold text-gray-900">{log.vehicle.name}</div>

@@ -32,6 +32,39 @@ export const Drivers: React.FC = () => {
 
   const drivers = data?.drivers || [];
 
+  // Search & Filter State
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('ALL');
+  const [categoryFilter, setCategoryFilter] = useState<string>('ALL');
+
+  // Extract unique license categories dynamically
+  const uniqueCategories = React.useMemo(() => {
+    const cats = new Set(drivers.map((d) => d.licenseCategory));
+    return Array.from(cats).sort();
+  }, [drivers]);
+
+  // Client-side filtering via useMemo
+  const filteredDrivers = React.useMemo(() => {
+    return drivers.filter((d) => {
+      const matchesSearch =
+        d.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        d.licenseNumber.toLowerCase().includes(searchQuery.toLowerCase());
+
+      const matchesStatus = statusFilter === 'ALL' || d.status === statusFilter;
+      const matchesCategory = categoryFilter === 'ALL' || d.licenseCategory === categoryFilter;
+
+      return matchesSearch && matchesStatus && matchesCategory;
+    });
+  }, [drivers, searchQuery, statusFilter, categoryFilter]);
+
+  const isFilterActive = searchQuery !== '' || statusFilter !== 'ALL' || categoryFilter !== 'ALL';
+
+  const clearFilters = () => {
+    setSearchQuery('');
+    setStatusFilter('ALL');
+    setCategoryFilter('ALL');
+  };
+
   // React Hook Form config
   const {
     register,
@@ -181,30 +214,93 @@ export const Drivers: React.FC = () => {
           Failed to load drivers list. Please check server connections.
         </div>
       ) : (
-        <div className="border border-gray-300 bg-white overflow-hidden shadow-sm">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse text-sm">
-              <thead>
-                <tr className="border-b border-gray-300 bg-gray-50 font-semibold text-gray-700 uppercase tracking-wider text-[11px]">
-                  <th className="px-6 py-3 border-r border-gray-200">Name</th>
-                  <th className="px-6 py-3 border-r border-gray-200">License Number</th>
-                  <th className="px-6 py-3 border-r border-gray-200">Category</th>
-                  <th className="px-6 py-3 border-r border-gray-200">License Expiry</th>
-                  <th className="px-6 py-3 border-r border-gray-200">Contact</th>
-                  <th className="px-6 py-3 border-r border-gray-200 text-right">Safety Score</th>
-                  <th className="px-6 py-3 border-r border-gray-200 text-center">Status</th>
-                  <th className="px-6 py-3 text-center">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {drivers.length === 0 ? (
-                  <tr>
-                    <td colSpan={8} className="px-6 py-10 text-center text-gray-500 font-medium">
-                      No drivers found. Add a driver to get started.
-                    </td>
+        <>
+          {/* Search & Filter Bar */}
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-4 border border-gray-300 bg-gray-50 p-4 shadow-sm">
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500">Search:</span>
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Name or license..."
+                  className="border border-gray-300 bg-white px-3 py-1.5 text-xs text-gray-900 focus:border-black focus:outline-none w-48"
+                />
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500">Status:</span>
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="border border-gray-300 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 focus:border-black focus:outline-none"
+                >
+                  <option value="ALL">All Statuses</option>
+                  <option value="AVAILABLE">Available</option>
+                  <option value="ON_TRIP">On Trip</option>
+                  <option value="OFF_DUTY">Off Duty</option>
+                  <option value="SUSPENDED">Suspended</option>
+                </select>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500">Category:</span>
+                <select
+                  value={categoryFilter}
+                  onChange={(e) => setCategoryFilter(e.target.value)}
+                  className="border border-gray-300 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 focus:border-black focus:outline-none"
+                >
+                  <option value="ALL">All Categories</option>
+                  {uniqueCategories.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {isFilterActive && (
+              <button
+                onClick={clearFilters}
+                className="text-xs font-bold text-gray-600 hover:text-black uppercase tracking-wider underline underline-offset-4"
+              >
+                Clear Filters
+              </button>
+            )}
+          </div>
+
+          <div className="border border-gray-300 bg-white overflow-hidden shadow-sm">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse text-sm">
+                <thead>
+                  <tr className="border-b border-gray-300 bg-gray-50 font-semibold text-gray-700 uppercase tracking-wider text-[11px]">
+                    <th className="px-6 py-3 border-r border-gray-200">Name</th>
+                    <th className="px-6 py-3 border-r border-gray-200">License Number</th>
+                    <th className="px-6 py-3 border-r border-gray-200">Category</th>
+                    <th className="px-6 py-3 border-r border-gray-200">License Expiry</th>
+                    <th className="px-6 py-3 border-r border-gray-200">Contact</th>
+                    <th className="px-6 py-3 border-r border-gray-200 text-right">Safety Score</th>
+                    <th className="px-6 py-3 border-r border-gray-200 text-center">Status</th>
+                    <th className="px-6 py-3 text-center">Actions</th>
                   </tr>
-                ) : (
-                  drivers.map((d) => {
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {drivers.length === 0 ? (
+                    <tr>
+                      <td colSpan={8} className="px-6 py-10 text-center text-gray-500 font-medium">
+                        No drivers found. Add a driver to get started.
+                      </td>
+                    </tr>
+                  ) : filteredDrivers.length === 0 ? (
+                    <tr>
+                      <td colSpan={8} className="px-6 py-10 text-center text-gray-500 font-medium">
+                        No results match your filters.
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredDrivers.map((d) => {
                     const isLicenseExpired = new Date(d.licenseExpiry) < new Date();
                     return (
                       <tr key={d.id} className="hover:bg-gray-50">
@@ -236,11 +332,12 @@ export const Drivers: React.FC = () => {
                       </tr>
                     );
                   })
-                )}
+                 )}
               </tbody>
             </table>
           </div>
         </div>
+      </>
       )}
 
       {/* Modal Dialog */}

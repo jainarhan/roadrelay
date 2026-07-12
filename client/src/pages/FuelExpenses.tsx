@@ -86,6 +86,64 @@ export const FuelExpenses: React.FC = () => {
   const fuelLogs = fuelLogsData?.fuelLogs || [];
   const expenses = expensesData?.expenses || [];
 
+  // Date Range Filter States
+  const [fromDateFilter, setFromDateFilter] = useState('');
+  const [toDateFilter, setToDateFilter] = useState('');
+
+  // Client-side filtering via useMemo for Fuel Logs
+  const filteredFuelLogs = React.useMemo(() => {
+    return fuelLogs.filter((log) => {
+      if (!log.date) return true;
+      const logDate = new Date(log.date);
+      logDate.setHours(0, 0, 0, 0);
+
+      if (fromDateFilter) {
+        const fromDate = new Date(fromDateFilter);
+        fromDate.setHours(0, 0, 0, 0);
+        if (logDate < fromDate) return false;
+      }
+
+      if (toDateFilter) {
+        const toDate = new Date(toDateFilter);
+        toDate.setHours(0, 0, 0, 0);
+        if (logDate > toDate) return false;
+      }
+
+      return true;
+    });
+  }, [fuelLogs, fromDateFilter, toDateFilter]);
+
+  // Client-side filtering via useMemo for Expenses
+  const filteredExpenses = React.useMemo(() => {
+    return expenses.filter((exp) => {
+      if (!exp.date) return true;
+      const expDate = new Date(exp.date);
+      expDate.setHours(0, 0, 0, 0);
+
+      if (fromDateFilter) {
+        const fromDate = new Date(fromDateFilter);
+        fromDate.setHours(0, 0, 0, 0);
+        if (expDate < fromDate) return false;
+      }
+
+      if (toDateFilter) {
+        const toDate = new Date(toDateFilter);
+        toDate.setHours(0, 0, 0, 0);
+        if (expDate > toDate) return false;
+      }
+
+      return true;
+    });
+  }, [expenses, fromDateFilter, toDateFilter]);
+
+  const isFilterActive = selectedVehicleFilter !== 'ALL' || fromDateFilter !== '' || toDateFilter !== '';
+
+  const clearFilters = () => {
+    setSelectedVehicleFilter('ALL');
+    setFromDateFilter('');
+    setToDateFilter('');
+  };
+
   // React Hook Forms
   const fuelForm = useForm<any>({
     resolver: zodResolver(createFuelLogSchema),
@@ -233,8 +291,8 @@ export const FuelExpenses: React.FC = () => {
         </div>
       </div>
 
-      {/* Tabs and Filter Bar */}
-      <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-gray-300 gap-4">
+      {/* Tabs Layout */}
+      <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-gray-300 gap-4">
         <div className="flex gap-4">
           <button
             onClick={() => setActiveTab('fuel')}
@@ -253,24 +311,56 @@ export const FuelExpenses: React.FC = () => {
             General Expenses
           </button>
         </div>
+      </div>
 
-        <div className="pb-2.5 flex items-center gap-2">
-          <label className="text-[11px] font-semibold uppercase tracking-wider text-gray-700">
-            Filter by Vehicle:
-          </label>
-          <select
-            value={selectedVehicleFilter}
-            onChange={(e) => setSelectedVehicleFilter(e.target.value)}
-            className="border border-gray-300 bg-white px-3 py-1 text-xs font-semibold text-gray-700 focus:border-black focus:outline-none"
-          >
-            <option value="ALL">Show All Vehicles</option>
-            {vehicles.map((v) => (
-              <option key={v.id} value={v.id}>
-                {v.name} ({v.regNumber})
-              </option>
-            ))}
-          </select>
+      {/* Search & Filter Bar */}
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-4 border border-gray-300 bg-gray-50 p-4 shadow-sm">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500">Vehicle:</span>
+            <select
+              value={selectedVehicleFilter}
+              onChange={(e) => setSelectedVehicleFilter(e.target.value)}
+              className="border border-gray-300 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 focus:border-black focus:outline-none"
+            >
+              <option value="ALL">Show All Vehicles</option>
+              {vehicles.map((v) => (
+                <option key={v.id} value={v.id}>
+                  {v.name} ({v.regNumber})
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500">From Date:</span>
+            <input
+              type="date"
+              value={fromDateFilter}
+              onChange={(e) => setFromDateFilter(e.target.value)}
+              className="border border-gray-300 bg-white px-3 py-1.5 text-xs text-gray-900 focus:border-black focus:outline-none"
+            />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500">To Date:</span>
+            <input
+              type="date"
+              value={toDateFilter}
+              onChange={(e) => setToDateFilter(e.target.value)}
+              className="border border-gray-300 bg-white px-3 py-1.5 text-xs text-gray-900 focus:border-black focus:outline-none"
+            />
+          </div>
         </div>
+
+        {isFilterActive && (
+          <button
+            onClick={clearFilters}
+            className="text-xs font-bold text-gray-600 hover:text-black uppercase tracking-wider underline underline-offset-4"
+          >
+            Clear Filters
+          </button>
+        )}
       </div>
 
       {activeTab === 'fuel' ? (
@@ -296,8 +386,14 @@ export const FuelExpenses: React.FC = () => {
                         No fuel logs found.
                       </td>
                     </tr>
+                  ) : filteredFuelLogs.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} className="px-6 py-10 text-center text-gray-500 font-medium">
+                        No results match your filters.
+                      </td>
+                    </tr>
                   ) : (
-                    fuelLogs.map((log) => (
+                    filteredFuelLogs.map((log) => (
                       <tr key={log.id} className="hover:bg-gray-50">
                         <td className="px-6 py-4 border-r border-gray-200 font-semibold text-gray-900">
                           <div>{log.vehicle.name}</div>
@@ -345,8 +441,14 @@ export const FuelExpenses: React.FC = () => {
                       No expense records found.
                     </td>
                   </tr>
+                ) : filteredExpenses.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} className="px-6 py-10 text-center text-gray-500 font-medium">
+                      No results match your filters.
+                    </td>
+                  </tr>
                 ) : (
-                  expenses.map((expense) => (
+                  filteredExpenses.map((expense) => (
                     <tr key={expense.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 border-r border-gray-200 font-semibold text-gray-900">
                         <div>{expense.vehicle.name}</div>

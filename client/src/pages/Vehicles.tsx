@@ -32,6 +32,40 @@ export const Vehicles: React.FC = () => {
 
   const vehicles = data?.vehicles || [];
 
+  // Search & Filter State
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('ALL');
+  const [typeFilter, setTypeFilter] = useState<string>('ALL');
+
+  // Extract unique vehicle types dynamically
+  const uniqueTypes = React.useMemo(() => {
+    const types = new Set(vehicles.map((v) => v.type));
+    return Array.from(types).sort();
+  }, [vehicles]);
+
+  // Client-side memoized filtering
+  const filteredVehicles = React.useMemo(() => {
+    return vehicles.filter((v) => {
+      const matchesSearch =
+        v.regNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        v.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        v.type.toLowerCase().includes(searchQuery.toLowerCase());
+
+      const matchesStatus = statusFilter === 'ALL' || v.status === statusFilter;
+      const matchesType = typeFilter === 'ALL' || v.type === typeFilter;
+
+      return matchesSearch && matchesStatus && matchesType;
+    });
+  }, [vehicles, searchQuery, statusFilter, typeFilter]);
+
+  const isFilterActive = searchQuery !== '' || statusFilter !== 'ALL' || typeFilter !== 'ALL';
+
+  const clearFilters = () => {
+    setSearchQuery('');
+    setStatusFilter('ALL');
+    setTypeFilter('ALL');
+  };
+
   // React Hook Form config
   const {
     register,
@@ -179,64 +213,128 @@ export const Vehicles: React.FC = () => {
           Failed to load vehicles list. Please check server connections.
         </div>
       ) : (
-        <div className="border border-gray-300 bg-white overflow-hidden shadow-sm">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse text-sm">
-              <thead>
-                <tr className="border-b border-gray-300 bg-gray-50 font-semibold text-gray-700 uppercase tracking-wider text-[11px]">
-                  <th className="px-6 py-3 border-r border-gray-200">Reg Number</th>
-                  <th className="px-6 py-3 border-r border-gray-200">Name</th>
-                  <th className="px-6 py-3 border-r border-gray-200">Type</th>
-                  <th className="px-6 py-3 border-r border-gray-200 text-right">Max Load (kg)</th>
-                  <th className="px-6 py-3 border-r border-gray-200 text-right">Odometer (km)</th>
-                  <th className="px-6 py-3 border-r border-gray-200 text-right">Acq. Cost ($)</th>
-                  <th className="px-6 py-3 border-r border-gray-200 text-center">Status</th>
-                  <th className="px-6 py-3 text-center">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {vehicles.length === 0 ? (
-                  <tr>
-                    <td colSpan={8} className="px-6 py-10 text-center text-gray-500 font-medium">
-                      No vehicles found. Add a vehicle to get started.
-                    </td>
+        <>
+          {/* Search & Filter Bar */}
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-4 border border-gray-300 bg-gray-50 p-4 shadow-sm">
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500">Search:</span>
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Reg, name, type..."
+                  className="border border-gray-300 bg-white px-3 py-1.5 text-xs text-gray-900 focus:border-black focus:outline-none w-48"
+                />
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500">Status:</span>
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="border border-gray-300 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 focus:border-black focus:outline-none"
+                >
+                  <option value="ALL">All Statuses</option>
+                  <option value="AVAILABLE">Available</option>
+                  <option value="ON_TRIP">On Trip</option>
+                  <option value="IN_SHOP">In Shop</option>
+                  <option value="RETIRED">Retired</option>
+                </select>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500">Type:</span>
+                <select
+                  value={typeFilter}
+                  onChange={(e) => setTypeFilter(e.target.value)}
+                  className="border border-gray-300 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 focus:border-black focus:outline-none"
+                >
+                  <option value="ALL">All Types</option>
+                  {uniqueTypes.map((t) => (
+                    <option key={t} value={t}>
+                      {t}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {isFilterActive && (
+              <button
+                onClick={clearFilters}
+                className="text-xs font-bold text-gray-600 hover:text-black uppercase tracking-wider underline underline-offset-4"
+              >
+                Clear Filters
+              </button>
+            )}
+          </div>
+
+          <div className="border border-gray-300 bg-white overflow-hidden shadow-sm">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse text-sm">
+                <thead>
+                  <tr className="border-b border-gray-300 bg-gray-50 font-semibold text-gray-700 uppercase tracking-wider text-[11px]">
+                    <th className="px-6 py-3 border-r border-gray-200">Reg Number</th>
+                    <th className="px-6 py-3 border-r border-gray-200">Name</th>
+                    <th className="px-6 py-3 border-r border-gray-200">Type</th>
+                    <th className="px-6 py-3 border-r border-gray-200 text-right">Max Load (kg)</th>
+                    <th className="px-6 py-3 border-r border-gray-200 text-right">Odometer (km)</th>
+                    <th className="px-6 py-3 border-r border-gray-200 text-right">Acq. Cost ($)</th>
+                    <th className="px-6 py-3 border-r border-gray-200 text-center">Status</th>
+                    <th className="px-6 py-3 text-center">Actions</th>
                   </tr>
-                ) : (
-                  vehicles.map((v) => (
-                    <tr key={v.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 font-mono font-semibold text-gray-900 border-r border-gray-200">{v.regNumber}</td>
-                      <td className="px-6 py-4 font-medium text-gray-900 border-r border-gray-200">{v.name}</td>
-                      <td className="px-6 py-4 text-gray-600 border-r border-gray-200">{v.type}</td>
-                      <td className="px-6 py-4 text-right text-gray-900 border-r border-gray-200">{v.maxLoadCapacity.toLocaleString()}</td>
-                      <td className="px-6 py-4 text-right text-gray-900 border-r border-gray-200">{v.odometer.toLocaleString()}</td>
-                      <td className="px-6 py-4 text-right text-gray-900 border-r border-gray-200">${v.acquisitionCost.toLocaleString()}</td>
-                      <td className="px-6 py-4 text-center border-r border-gray-200">{getStatusBadge(v.status)}</td>
-                      <td className="px-6 py-4 text-center">
-                        <div className="flex items-center justify-center gap-1.5">
-                          <button
-                            onClick={() => openEditModal(v)}
-                            className="inline-flex items-center gap-1 border border-gray-300 bg-white px-2.5 py-1 text-xs font-semibold text-gray-700 hover:bg-gray-50"
-                          >
-                            <Edit2 className="h-3 w-3" />
-                            EDIT
-                          </button>
-                          {v.status === 'AVAILABLE' && (
-                            <button
-                              onClick={() => retireMutation.mutate(v.id)}
-                              className="inline-flex items-center gap-1 border border-red-300 bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-700 hover:bg-red-100"
-                            >
-                              RETIRE
-                            </button>
-                          )}
-                        </div>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {vehicles.length === 0 ? (
+                    <tr>
+                      <td colSpan={8} className="px-6 py-10 text-center text-gray-500 font-medium">
+                        No vehicles found. Add a vehicle to get started.
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  ) : filteredVehicles.length === 0 ? (
+                    <tr>
+                      <td colSpan={8} className="px-6 py-10 text-center text-gray-500 font-medium">
+                        No results match your filters.
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredVehicles.map((v) => (
+                      <tr key={v.id} className="hover:bg-gray-50">
+                        <td className="px-6 py-4 font-mono font-semibold text-gray-900 border-r border-gray-200">{v.regNumber}</td>
+                        <td className="px-6 py-4 font-medium text-gray-900 border-r border-gray-200">{v.name}</td>
+                        <td className="px-6 py-4 text-gray-600 border-r border-gray-200">{v.type}</td>
+                        <td className="px-6 py-4 text-right text-gray-900 border-r border-gray-200">{v.maxLoadCapacity.toLocaleString()}</td>
+                        <td className="px-6 py-4 text-right text-gray-900 border-r border-gray-200">{v.odometer.toLocaleString()}</td>
+                        <td className="px-6 py-4 text-right text-gray-900 border-r border-gray-200">${v.acquisitionCost.toLocaleString()}</td>
+                        <td className="px-6 py-4 text-center border-r border-gray-200">{getStatusBadge(v.status)}</td>
+                        <td className="px-6 py-4 text-center">
+                          <div className="flex items-center justify-center gap-1.5">
+                            <button
+                              onClick={() => openEditModal(v)}
+                              className="inline-flex items-center gap-1 border border-gray-300 bg-white px-2.5 py-1 text-xs font-semibold text-gray-700 hover:bg-gray-50"
+                            >
+                              <Edit2 className="h-3 w-3" />
+                              EDIT
+                            </button>
+                            {v.status === 'AVAILABLE' && (
+                              <button
+                                onClick={() => retireMutation.mutate(v.id)}
+                                className="inline-flex items-center gap-1 border border-red-300 bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-700 hover:bg-red-100"
+                              >
+                                RETIRE
+                              </button>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+        </>
       )}
 
       {/* Modal Dialog */}
