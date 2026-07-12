@@ -6,9 +6,9 @@ import { ProtectedRoute } from './components/RoleGate';
 import { Sidebar } from './components/Sidebar';
 import { Login } from './pages/Login';
 import { Dashboard } from './pages/Dashboard';
+import { Vehicles } from './pages/Vehicles';
 import { Unauthorized } from './pages/Unauthorized';
 import {
-  VehiclesPlaceholder,
   DriversPlaceholder,
   TripsPlaceholder,
   MaintenancePlaceholder,
@@ -79,7 +79,7 @@ const App: React.FC = () => {
                 path="/vehicles"
                 element={
                   <ProtectedRoute roles={['FLEET_MANAGER']}>
-                    <VehiclesPlaceholder />
+                    <Vehicles />
                   </ProtectedRoute>
                 }
               />

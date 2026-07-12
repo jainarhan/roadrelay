@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import authRoutes from './routes/auth';
+import vehicleRoutes from './routes/vehicle';
 import { errorHandler } from './middleware/errorHandler';
 
 const app = express();
@@ -32,6 +33,7 @@ app.get('/health', (req, res) => {
 
 // Routes under /api namespace
 app.use('/api/auth', authRoutes);
+app.use('/api/vehicles', vehicleRoutes);
 
 // Centralized error handler (must be last)
 app.use(errorHandler);

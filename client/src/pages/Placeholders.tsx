@@ -1,12 +1,5 @@
 import React from 'react';
 
-export const VehiclesPlaceholder: React.FC = () => (
-  <div className="p-6">
-    <h1 className="text-2xl font-bold tracking-tight text-gray-900">Vehicles Registry</h1>
-    <p className="mt-1 text-sm text-gray-600">Phase 2: Vehicles CRUD under construction.</p>
-  </div>
-);
-
 export const DriversPlaceholder: React.FC = () => (
   <div className="p-6">
     <h1 className="text-2xl font-bold tracking-tight text-gray-900">Driver Management</h1>
