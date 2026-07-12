@@ -17,85 +17,7 @@ async function main() {
 
   console.log('Database cleaned.');
 
-  // Create Users (Hashed passwords)
-  const passwordHash = await bcrypt.hash('Password123', 10);
-
-  const manager = await prisma.user.create({
-    data: {
-      email: 'manager@transitops.com',
-      passwordHash,
-      role: Role.FLEET_MANAGER,
-    },
-  });
-
-  const driverUser = await prisma.user.create({
-    data: {
-      email: 'driver@transitops.com',
-      passwordHash,
-      role: Role.DRIVER,
-    },
-  });
-
-  const safety = await prisma.user.create({
-    data: {
-      email: 'safety@transitops.com',
-      passwordHash,
-      role: Role.SAFETY_OFFICER,
-    },
-  });
-
-  const finance = await prisma.user.create({
-    data: {
-      email: 'finance@transitops.com',
-      passwordHash,
-      role: Role.FINANCIAL_ANALYST,
-    },
-  });
-
-  console.log('Created Users:', {
-    manager: manager.email,
-    driverUser: driverUser.email,
-    safety: safety.email,
-    finance: finance.email,
-  });
-
-  // Create Vehicles
-  const v1 = await prisma.vehicle.create({
-    data: {
-      regNumber: 'REG-001',
-      name: 'Toyota Hiace',
-      type: 'Van',
-      maxLoadCapacity: 1500,
-      acquisitionCost: 35000,
-      status: VehicleStatus.AVAILABLE,
-    },
-  });
-
-  const v2 = await prisma.vehicle.create({
-    data: {
-      regNumber: 'REG-002',
-      name: 'Isuzu Elf',
-      type: 'Box Truck',
-      maxLoadCapacity: 4000,
-      acquisitionCost: 55000,
-      status: VehicleStatus.IN_SHOP,
-    },
-  });
-
-  const v3 = await prisma.vehicle.create({
-    data: {
-      regNumber: 'REG-003',
-      name: 'Volvo FH16',
-      type: 'Heavy Truck',
-      maxLoadCapacity: 20000,
-      acquisitionCost: 120000,
-      status: VehicleStatus.RETIRED,
-    },
-  });
-
-  console.log('Created Vehicles:', [v1.regNumber, v2.regNumber, v3.regNumber]);
-
-  // Create Drivers
+  // 1. Create Drivers
   const d1 = await prisma.driver.create({
     data: {
       name: 'John Doe',
@@ -133,6 +55,85 @@ async function main() {
   });
 
   console.log('Created Drivers:', [d1.name, d2.name, d3.name]);
+
+  // 2. Create Users (Hashed passwords)
+  const passwordHash = await bcrypt.hash('Password123', 10);
+
+  const manager = await prisma.user.create({
+    data: {
+      email: 'manager@transitops.com',
+      passwordHash,
+      role: Role.FLEET_MANAGER,
+    },
+  });
+
+  const driverUser = await prisma.user.create({
+    data: {
+      email: 'driver@transitops.com',
+      passwordHash,
+      role: Role.DRIVER,
+      driverId: d1.id, // Explicitly link driver user to John Doe
+    },
+  });
+
+  const safety = await prisma.user.create({
+    data: {
+      email: 'safety@transitops.com',
+      passwordHash,
+      role: Role.SAFETY_OFFICER,
+    },
+  });
+
+  const finance = await prisma.user.create({
+    data: {
+      email: 'finance@transitops.com',
+      passwordHash,
+      role: Role.FINANCIAL_ANALYST,
+    },
+  });
+
+  console.log('Created Users:', {
+    manager: manager.email,
+    driverUser: driverUser.email,
+    safety: safety.email,
+    finance: finance.email,
+  });
+
+  // 3. Create Vehicles
+  const v1 = await prisma.vehicle.create({
+    data: {
+      regNumber: 'REG-001',
+      name: 'Toyota Hiace',
+      type: 'Van',
+      maxLoadCapacity: 1500,
+      acquisitionCost: 35000,
+      status: VehicleStatus.AVAILABLE,
+    },
+  });
+
+  const v2 = await prisma.vehicle.create({
+    data: {
+      regNumber: 'REG-002',
+      name: 'Isuzu Elf',
+      type: 'Box Truck',
+      maxLoadCapacity: 4000,
+      acquisitionCost: 55000,
+      status: VehicleStatus.IN_SHOP,
+    },
+  });
+
+  const v3 = await prisma.vehicle.create({
+    data: {
+      regNumber: 'REG-003',
+      name: 'Volvo FH16',
+      type: 'Heavy Truck',
+      maxLoadCapacity: 20000,
+      acquisitionCost: 120000,
+      status: VehicleStatus.RETIRED,
+    },
+  });
+
+  console.log('Created Vehicles:', [v1.regNumber, v2.regNumber, v3.regNumber]);
   console.log('DB seed complete.');
 }
 

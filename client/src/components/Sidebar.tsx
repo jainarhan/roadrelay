@@ -59,6 +59,16 @@ export const Sidebar: React.FC = () => {
           </NavLink>
         </RoleGate>
 
+        <RoleGate roles={['DRIVER']}>
+          <NavLink
+            to="/my-trips"
+            className={({ isActive }) => (isActive ? activeStyle : inactiveStyle)}
+          >
+            <MapPin className="h-4 w-4 text-gray-500" />
+            My Trips
+          </NavLink>
+        </RoleGate>
+
         <RoleGate roles={['FLEET_MANAGER', 'SAFETY_OFFICER']}>
           <NavLink
             to="/maintenance"

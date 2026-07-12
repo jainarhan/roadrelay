@@ -6,6 +6,7 @@ export interface User {
   id: string;
   email: string;
   role: Role;
+  driverId?: string | null;
 }
 
 interface AuthContextType {

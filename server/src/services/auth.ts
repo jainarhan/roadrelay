@@ -28,6 +28,7 @@ export async function loginService(input: LoginInput) {
       id: user.id,
       email: user.email,
       role: user.role,
+      driverId: user.driverId,
     },
     JWT_SECRET,
     { expiresIn: TOKEN_EXPIRY }
@@ -39,6 +40,7 @@ export async function loginService(input: LoginInput) {
       id: user.id,
       email: user.email,
       role: user.role,
+      driverId: user.driverId,
     },
   };
 }

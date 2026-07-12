@@ -43,6 +43,8 @@ model User {
   passwordHash String
   role         Role
   createdAt    DateTime @default(now())
+  driverId     String?  @unique
+  driver       Driver?  @relation(fields: [driverId], references: [id])
 }
 
 model Vehicle {
@@ -76,6 +78,7 @@ model Driver {
   createdAt       DateTime     @default(now())
 
   trips           Trip[]
+  user            User?
 
   @@index([status])
 }

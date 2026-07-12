@@ -12,6 +12,7 @@ import { Trips } from './pages/Trips';
 import { Maintenance } from './pages/Maintenance';
 import { FuelExpenses } from './pages/FuelExpenses';
 import { Reports } from './pages/Reports';
+import { MyTrips } from './pages/MyTrips';
 import { Unauthorized } from './pages/Unauthorized';
 
 const queryClient = new QueryClient();
@@ -123,6 +124,15 @@ const App: React.FC = () => {
                 element={
                   <ProtectedRoute roles={['FLEET_MANAGER', 'FINANCIAL_ANALYST']}>
                     <Reports />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/my-trips"
+                element={
+                  <ProtectedRoute roles={['DRIVER']}>
+                    <MyTrips />
                   </ProtectedRoute>
                 }
               />

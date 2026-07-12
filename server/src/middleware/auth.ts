@@ -17,12 +17,14 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
       id: string;
       email: string;
       role: Role;
+      driverId?: string | null;
     };
 
     req.user = {
       id: decoded.id,
       email: decoded.email,
       role: decoded.role,
+      driverId: decoded.driverId || null,
     };
 
     next();
