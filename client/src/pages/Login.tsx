@@ -3,17 +3,13 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, LoginInput } from 'shared';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export const Login: React.FC = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
   const [apiError, setApiError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Get the target URL from navigation state, defaulting to dashboard
-  const from = (location.state as any)?.from?.pathname || '/';
 
   const {
     register,
@@ -28,7 +24,7 @@ export const Login: React.FC = () => {
     setIsSubmitting(true);
     try {
       await login(data.email, data.password);
-      navigate(from, { replace: true });
+      navigate('/', { replace: true });
     } catch (error: any) {
       setApiError(error.message || 'Login failed. Please verify your credentials.');
     } finally {
@@ -89,29 +85,6 @@ export const Login: React.FC = () => {
             {isSubmitting ? 'SIGNING IN...' : 'SIGN IN'}
           </button>
         </form>
-
-        <div className="mt-6 border-t border-gray-200 pt-4">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">Demo Accounts</h2>
-          <div className="grid grid-cols-2 gap-2 text-xs text-gray-600">
-            <div>
-              <span className="font-medium text-gray-700">Fleet Manager:</span>
-              <br />manager@transitops.com
-            </div>
-            <div>
-              <span className="font-medium text-gray-700">Driver:</span>
-              <br />driver@transitops.com
-            </div>
-            <div>
-              <span className="font-medium text-gray-700">Safety Officer:</span>
-              <br />safety@transitops.com
-            </div>
-            <div>
-              <span className="font-medium text-gray-700">Financial Analyst:</span>
-              <br />finance@transitops.com
-            </div>
-          </div>
-          <p className="mt-2 text-[10px] text-gray-500 italic">Password for all is: Password123</p>
-        </div>
       </div>
     </div>
   );
