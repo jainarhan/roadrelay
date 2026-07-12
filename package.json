@@ -1,0 +1,9 @@
+{
+  "name": "transitops-monorepo",
+  "private": true,
+  "workspaces": [
+    "shared",
+    "server",
+    "client"
+  ]
+}
