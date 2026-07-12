@@ -10,9 +10,9 @@ import { Vehicles } from './pages/Vehicles';
 import { Drivers } from './pages/Drivers';
 import { Trips } from './pages/Trips';
 import { Maintenance } from './pages/Maintenance';
+import { FuelExpenses } from './pages/FuelExpenses';
 import { Unauthorized } from './pages/Unauthorized';
 import {
-  FuelExpensesPlaceholder,
   ReportsPlaceholder,
 } from './pages/Placeholders';
 
@@ -115,7 +115,7 @@ const App: React.FC = () => {
                 path="/fuel-expenses"
                 element={
                   <ProtectedRoute roles={['FLEET_MANAGER', 'FINANCIAL_ANALYST']}>
-                    <FuelExpensesPlaceholder />
+                    <FuelExpenses />
                   </ProtectedRoute>
                 }
               />

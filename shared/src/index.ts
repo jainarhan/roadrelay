@@ -111,3 +111,22 @@ export const createMaintenanceSchema = z.object({
 });
 
 export type CreateMaintenanceInput = z.infer<typeof createMaintenanceSchema>;
+
+export const createFuelLogSchema = z.object({
+  vehicleId: z.string().uuid('Invalid vehicle selection'),
+  tripId: z.string().uuid('Invalid trip selection').optional().nullable(),
+  liters: z.number().positive('Liters must be positive').max(10000, 'Liters cannot exceed 10,000 liters'),
+  cost: z.number().positive('Cost must be positive').max(10000000, 'Cost cannot exceed $10,000,000'),
+  date: z.string().optional().transform((val) => val ? new Date(val) : new Date()),
+});
+
+export type CreateFuelLogInput = z.infer<typeof createFuelLogSchema>;
+
+export const createExpenseSchema = z.object({
+  vehicleId: z.string().uuid('Invalid vehicle selection'),
+  type: z.string().trim().min(1, 'Expense type is required').max(100, 'Expense type cannot exceed 100 characters'),
+  amount: z.number().positive('Amount must be positive').max(10000000, 'Amount cannot exceed $10,000,000'),
+  date: z.string().optional().transform((val) => val ? new Date(val) : new Date()),
+});
+
+export type CreateExpenseInput = z.infer<typeof createExpenseSchema>;
