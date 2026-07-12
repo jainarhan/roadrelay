@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createFuelLogSchema, createExpenseSchema, CreateFuelLogInput, CreateExpenseInput } from 'shared';
 import { api, ApiError } from '../lib/api';
-import { Plus, X, AlertCircle } from 'lucide-react';
+import { Plus, X, AlertCircle, Download } from 'lucide-react';
 
 interface Vehicle {
   id: string;
@@ -197,17 +197,31 @@ export const FuelExpenses: React.FC = () => {
           <h1 className="text-2xl font-bold tracking-tight text-gray-900">Fuel & Expenses</h1>
           <p className="mt-1 text-sm text-gray-600">Log refuels and general operational expenditures.</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap justify-end">
+          <button
+            onClick={() => window.open('/api/export/fuel-logs', '_blank')}
+            className="flex items-center gap-2 border border-black bg-white px-3 py-2 text-sm font-semibold text-black hover:bg-gray-50"
+          >
+            <Download className="h-4 w-4" />
+            EXPORT FUEL
+          </button>
           <button
             onClick={openFuelModal}
-            className="flex items-center gap-2 bg-black px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800"
+            className="flex items-center gap-2 bg-black px-3 py-2 text-sm font-semibold text-white hover:bg-gray-800"
           >
             <Plus className="h-4 w-4" />
             LOG FUEL
           </button>
           <button
+            onClick={() => window.open('/api/export/expenses', '_blank')}
+            className="flex items-center gap-2 border border-black bg-white px-3 py-2 text-sm font-semibold text-black hover:bg-gray-50"
+          >
+            <Download className="h-4 w-4" />
+            EXPORT EXPENSES
+          </button>
+          <button
             onClick={openExpenseModal}
-            className="flex items-center gap-2 border border-black bg-white px-4 py-2 text-sm font-semibold text-black hover:bg-gray-50"
+            className="flex items-center gap-2 bg-black px-3 py-2 text-sm font-semibold text-white hover:bg-gray-800"
           >
             <Plus className="h-4 w-4" />
             LOG EXPENSE

@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createTripSchema, completeTripSchema, CreateTripInput, CompleteTripInput, TripStatus } from 'shared';
 import { api, ApiError } from '../lib/api';
-import { Plus, Check, Play, XCircle, X } from 'lucide-react';
+import { Plus, Check, Play, XCircle, X, Download } from 'lucide-react';
 
 interface Vehicle {
   id: string;
@@ -204,13 +204,22 @@ export const Trips: React.FC = () => {
           <h1 className="text-2xl font-bold tracking-tight text-gray-900">Trip Operations</h1>
           <p className="mt-1 text-sm text-gray-600">Schedule, dispatch, and track active transport deliveries.</p>
         </div>
-        <button
-          onClick={openCreateModal}
-          className="flex items-center gap-2 bg-black px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800"
-        >
-          <Plus className="h-4 w-4" />
-          SCHEDULE NEW TRIP
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => window.open('/api/export/trips', '_blank')}
+            className="flex items-center gap-2 border border-black bg-white px-4 py-2 text-sm font-semibold text-black hover:bg-gray-50"
+          >
+            <Download className="h-4 w-4" />
+            EXPORT CSV
+          </button>
+          <button
+            onClick={openCreateModal}
+            className="flex items-center gap-2 bg-black px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800"
+          >
+            <Plus className="h-4 w-4" />
+            SCHEDULE NEW TRIP
+          </button>
+        </div>
       </div>
 
       {isTripsLoading ? (
