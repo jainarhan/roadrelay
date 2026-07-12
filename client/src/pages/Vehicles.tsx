@@ -169,15 +169,15 @@ export const Vehicles: React.FC = () => {
     const base = "px-2.5 py-1 text-xs font-semibold uppercase tracking-wider border ";
     switch (status) {
       case 'AVAILABLE':
-        return <span className={`${base} bg-green-50 text-green-800 border-green-200`}>Available</span>;
+        return <span className={`${base} bg-green-50 dark:bg-green-950/30 text-green-800 dark:text-green-400 border-green-200 dark:border-green-900/50`}>Available</span>;
       case 'ON_TRIP':
-        return <span className={`${base} bg-blue-50 text-blue-800 border-blue-200`}>On Trip</span>;
+        return <span className={`${base} bg-blue-50 dark:bg-blue-950/30 text-blue-800 dark:text-blue-400 border-blue-200 dark:border-blue-900/50`}>On Trip</span>;
       case 'IN_SHOP':
-        return <span className={`${base} bg-amber-50 text-amber-800 border-amber-200`}>In Shop</span>;
+        return <span className={`${base} bg-amber-50 dark:bg-amber-950/30 text-amber-800 dark:text-amber-400 border-amber-200 dark:border-amber-900/50`}>In Shop</span>;
       case 'RETIRED':
-        return <span className={`${base} bg-gray-50 text-gray-800 border-gray-200`}>Retired</span>;
+        return <span className={`${base} bg-gray-50 dark:bg-gray-800 text-gray-800 dark:text-gray-400 border-gray-200 dark:border-gray-700`}>Retired</span>;
       default:
-        return <span className={`${base} bg-gray-100 text-gray-800 border-gray-300`}>{status}</span>;
+        return <span className={`${base} bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300 border-gray-300 dark:border-gray-600`}>{status}</span>;
     }
   };
 
@@ -185,20 +185,20 @@ export const Vehicles: React.FC = () => {
     <div className="p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900">Vehicle Registry</h1>
-          <p className="mt-1 text-sm text-gray-600">Register and manage active transportation vehicles.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Vehicle Registry</h1>
+          <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">Register and manage active transportation vehicles.</p>
         </div>
         <div className="flex items-center gap-3">
           <button
             onClick={() => window.open('/api/export/vehicles', '_blank')}
-            className="flex items-center gap-2 border border-black bg-white px-4 py-2 text-sm font-semibold text-black hover:bg-gray-50"
+            className="flex items-center gap-2 border border-black dark:border-white bg-white dark:bg-gray-800 px-4 py-2 text-sm font-semibold text-black dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700"
           >
             <Download className="h-4 w-4" />
             EXPORT CSV
           </button>
           <button
             onClick={openAddModal}
-            className="flex items-center gap-2 bg-black px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800"
+            className="flex items-center gap-2 bg-black dark:bg-white px-4 py-2 text-sm font-semibold text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-100"
           >
             <Plus className="h-4 w-4" />
             ADD VEHICLE
@@ -207,33 +207,33 @@ export const Vehicles: React.FC = () => {
       </div>
 
       {isLoading ? (
-        <div className="py-12 text-center text-gray-500 font-medium">Loading vehicle records...</div>
+        <div className="py-12 text-center text-gray-500 dark:text-gray-400 font-medium">Loading vehicle records...</div>
       ) : error ? (
-        <div className="border border-red-200 bg-red-50 p-4 text-sm text-red-600">
+        <div className="border border-red-200 dark:border-red-950 bg-red-50 dark:bg-red-950/20 p-4 text-sm text-red-600 dark:text-red-400">
           Failed to load vehicles list. Please check server connections.
         </div>
       ) : (
         <>
           {/* Search & Filter Bar */}
-          <div className="mb-4 flex flex-wrap items-center justify-between gap-4 border border-gray-300 bg-gray-50 p-4 shadow-sm">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-4 border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-4 shadow-sm">
             <div className="flex flex-wrap items-center gap-3">
               <div className="flex items-center gap-2">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500">Search:</span>
+                <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Search:</span>
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Reg, name, type..."
-                  className="border border-gray-300 bg-white px-3 py-1.5 text-xs text-gray-900 focus:border-black focus:outline-none w-48"
+                  className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-1.5 text-xs text-gray-900 dark:text-gray-100 focus:border-black dark:focus:border-white focus:outline-none w-48"
                 />
               </div>
 
               <div className="flex items-center gap-2">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500">Status:</span>
+                <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Status:</span>
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className="border border-gray-300 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 focus:border-black focus:outline-none"
+                  className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-1.5 text-xs font-semibold text-gray-700 dark:text-gray-200 focus:border-black dark:focus:border-white focus:outline-none"
                 >
                   <option value="ALL">All Statuses</option>
                   <option value="AVAILABLE">Available</option>
@@ -244,11 +244,11 @@ export const Vehicles: React.FC = () => {
               </div>
 
               <div className="flex items-center gap-2">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500">Type:</span>
+                <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Type:</span>
                 <select
                   value={typeFilter}
                   onChange={(e) => setTypeFilter(e.target.value)}
-                  className="border border-gray-300 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 focus:border-black focus:outline-none"
+                  className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-1.5 text-xs font-semibold text-gray-700 dark:text-gray-200 focus:border-black dark:focus:border-white focus:outline-none"
                 >
                   <option value="ALL">All Types</option>
                   {uniqueTypes.map((t) => (
@@ -263,56 +263,56 @@ export const Vehicles: React.FC = () => {
             {isFilterActive && (
               <button
                 onClick={clearFilters}
-                className="text-xs font-bold text-gray-600 hover:text-black uppercase tracking-wider underline underline-offset-4"
+                className="text-xs font-bold text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white uppercase tracking-wider underline underline-offset-4"
               >
                 Clear Filters
               </button>
             )}
           </div>
 
-          <div className="border border-gray-300 bg-white overflow-hidden shadow-sm">
+          <div className="border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse text-sm">
                 <thead>
-                  <tr className="border-b border-gray-300 bg-gray-50 font-semibold text-gray-700 uppercase tracking-wider text-[11px]">
-                    <th className="px-6 py-3 border-r border-gray-200">Reg Number</th>
-                    <th className="px-6 py-3 border-r border-gray-200">Name</th>
-                    <th className="px-6 py-3 border-r border-gray-200">Type</th>
-                    <th className="px-6 py-3 border-r border-gray-200 text-right">Max Load (kg)</th>
-                    <th className="px-6 py-3 border-r border-gray-200 text-right">Odometer (km)</th>
-                    <th className="px-6 py-3 border-r border-gray-200 text-right">Acq. Cost ($)</th>
-                    <th className="px-6 py-3 border-r border-gray-200 text-center">Status</th>
+                  <tr className="border-b border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider text-[11px]">
+                    <th className="px-6 py-3 border-r border-gray-200 dark:border-gray-700">Reg Number</th>
+                    <th className="px-6 py-3 border-r border-gray-200 dark:border-gray-700">Name</th>
+                    <th className="px-6 py-3 border-r border-gray-200 dark:border-gray-700">Type</th>
+                    <th className="px-6 py-3 border-r border-gray-200 dark:border-gray-700 text-right">Max Load (kg)</th>
+                    <th className="px-6 py-3 border-r border-gray-200 dark:border-gray-700 text-right">Odometer (km)</th>
+                    <th className="px-6 py-3 border-r border-gray-200 dark:border-gray-700 text-right">Acq. Cost ($)</th>
+                    <th className="px-6 py-3 border-r border-gray-200 dark:border-gray-700 text-center">Status</th>
                     <th className="px-6 py-3 text-center">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200">
+                <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                   {vehicles.length === 0 ? (
                     <tr>
-                      <td colSpan={8} className="px-6 py-10 text-center text-gray-500 font-medium">
+                      <td colSpan={8} className="px-6 py-10 text-center text-gray-500 dark:text-gray-400 font-medium">
                         No vehicles found. Add a vehicle to get started.
                       </td>
                     </tr>
                   ) : filteredVehicles.length === 0 ? (
                     <tr>
-                      <td colSpan={8} className="px-6 py-10 text-center text-gray-500 font-medium">
+                      <td colSpan={8} className="px-6 py-10 text-center text-gray-500 dark:text-gray-400 font-medium">
                         No results match your filters.
                       </td>
                     </tr>
                   ) : (
                     filteredVehicles.map((v) => (
-                      <tr key={v.id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 font-mono font-semibold text-gray-900 border-r border-gray-200">{v.regNumber}</td>
-                        <td className="px-6 py-4 font-medium text-gray-900 border-r border-gray-200">{v.name}</td>
-                        <td className="px-6 py-4 text-gray-600 border-r border-gray-200">{v.type}</td>
-                        <td className="px-6 py-4 text-right text-gray-900 border-r border-gray-200">{v.maxLoadCapacity.toLocaleString()}</td>
-                        <td className="px-6 py-4 text-right text-gray-900 border-r border-gray-200">{v.odometer.toLocaleString()}</td>
-                        <td className="px-6 py-4 text-right text-gray-900 border-r border-gray-200">${v.acquisitionCost.toLocaleString()}</td>
-                        <td className="px-6 py-4 text-center border-r border-gray-200">{getStatusBadge(v.status)}</td>
+                      <tr key={v.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                        <td className="px-6 py-4 font-mono font-semibold text-gray-900 dark:text-gray-100 border-r border-gray-200 dark:border-gray-700">{v.regNumber}</td>
+                        <td className="px-6 py-4 font-medium text-gray-900 dark:text-gray-100 border-r border-gray-200 dark:border-gray-700">{v.name}</td>
+                        <td className="px-6 py-4 text-gray-600 dark:text-gray-400 border-r border-gray-200 dark:border-gray-700">{v.type}</td>
+                        <td className="px-6 py-4 text-right text-gray-900 dark:text-gray-100 border-r border-gray-200 dark:border-gray-700">{v.maxLoadCapacity.toLocaleString()}</td>
+                        <td className="px-6 py-4 text-right text-gray-900 dark:text-gray-100 border-r border-gray-200 dark:border-gray-700">{v.odometer.toLocaleString()}</td>
+                        <td className="px-6 py-4 text-right text-gray-900 dark:text-gray-100 border-r border-gray-200 dark:border-gray-700">${v.acquisitionCost.toLocaleString()}</td>
+                        <td className="px-6 py-4 text-center border-r border-gray-200 dark:border-gray-700">{getStatusBadge(v.status)}</td>
                         <td className="px-6 py-4 text-center">
                           <div className="flex items-center justify-center gap-1.5">
                             <button
                               onClick={() => openEditModal(v)}
-                              className="inline-flex items-center gap-1 border border-gray-300 bg-white px-2.5 py-1 text-xs font-semibold text-gray-700 hover:bg-gray-50"
+                              className="inline-flex items-center gap-1 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2.5 py-1 text-xs font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
                             >
                               <Edit2 className="h-3 w-3" />
                               EDIT
@@ -320,7 +320,7 @@ export const Vehicles: React.FC = () => {
                             {v.status === 'AVAILABLE' && (
                               <button
                                 onClick={() => retireMutation.mutate(v.id)}
-                                className="inline-flex items-center gap-1 border border-red-300 bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-700 hover:bg-red-100"
+                                className="inline-flex items-center gap-1 border border-red-300 dark:border-red-950 bg-red-50 dark:bg-red-950/20 px-2.5 py-1 text-xs font-semibold text-red-700 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/40"
                               >
                                 RETIRE
                               </button>
@@ -339,24 +339,24 @@ export const Vehicles: React.FC = () => {
 
       {/* Modal Dialog */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 p-4">
-          <div className="w-full max-w-lg border border-gray-300 bg-white p-6 shadow-md relative">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 dark:bg-opacity-60 p-4">
+          <div className="w-full max-w-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-md relative">
             <button
               onClick={closeModal}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+              className="absolute top-4 right-4 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
             >
               <X className="h-5 w-5" />
             </button>
 
             <div className="mb-6">
-              <h2 className="text-lg font-bold text-gray-900">
+              <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">
                 {editingVehicle ? 'Edit Vehicle' : 'Add New Vehicle'}
               </h2>
-              <p className="text-xs text-gray-500 mt-1">Fill out the fields to register vehicle details.</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Fill out the fields to register vehicle details.</p>
             </div>
 
             {submitError && (
-              <div className="mb-4 border border-red-200 bg-red-50 p-3 text-xs text-red-600">
+              <div className="mb-4 border border-red-200 dark:border-red-950 bg-red-50 dark:bg-red-950/20 p-3 text-xs text-red-600 dark:text-red-400">
                 {submitError}
               </div>
             )}
@@ -364,14 +364,14 @@ export const Vehicles: React.FC = () => {
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-gray-700">
+                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-gray-700 dark:text-gray-300">
                     Reg Number
                   </label>
                   <input
                     type="text"
                     {...register('regNumber')}
                     placeholder="e.g. REG-123"
-                    className="mt-1 block w-full border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-black focus:outline-none uppercase"
+                    className="mt-1 block w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-black dark:focus:border-white focus:outline-none uppercase"
                   />
                   {errors.regNumber && (
                     <p className="mt-1 text-xs text-red-600 font-medium">{errors.regNumber.message}</p>
@@ -379,14 +379,14 @@ export const Vehicles: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-gray-700">
+                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-gray-700 dark:text-gray-300">
                     Vehicle Name
                   </label>
                   <input
                     type="text"
                     {...register('name')}
                     placeholder="e.g. Toyota Hiace"
-                    className="mt-1 block w-full border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-black focus:outline-none"
+                    className="mt-1 block w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-black dark:focus:border-white focus:outline-none"
                   />
                   {errors.name && (
                     <p className="mt-1 text-xs text-red-600 font-medium">{errors.name.message}</p>
@@ -396,14 +396,14 @@ export const Vehicles: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-gray-700">
+                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-gray-700 dark:text-gray-300">
                     Type
                   </label>
                   <input
                     type="text"
                     {...register('type')}
                     placeholder="e.g. Van, Truck"
-                    className="mt-1 block w-full border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-black focus:outline-none"
+                    className="mt-1 block w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-black dark:focus:border-white focus:outline-none"
                   />
                   {errors.type && (
                     <p className="mt-1 text-xs text-red-600 font-medium">{errors.type.message}</p>
@@ -411,7 +411,7 @@ export const Vehicles: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-gray-700">
+                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-gray-700 dark:text-gray-300">
                     Max Load Capacity (kg)
                   </label>
                   <input
@@ -419,7 +419,7 @@ export const Vehicles: React.FC = () => {
                     step="any"
                     {...register('maxLoadCapacity', { valueAsNumber: true })}
                     placeholder="e.g. 1500"
-                    className="mt-1 block w-full border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-black focus:outline-none"
+                    className="mt-1 block w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-black dark:focus:border-white focus:outline-none"
                   />
                   {errors.maxLoadCapacity && (
                     <p className="mt-1 text-xs text-red-600 font-medium">{errors.maxLoadCapacity.message}</p>
@@ -429,7 +429,7 @@ export const Vehicles: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-gray-700">
+                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-gray-700 dark:text-gray-300">
                     Odometer (km)
                   </label>
                   <input
@@ -437,7 +437,7 @@ export const Vehicles: React.FC = () => {
                     step="any"
                     {...register('odometer', { valueAsNumber: true })}
                     placeholder="e.g. 0"
-                    className="mt-1 block w-full border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-black focus:outline-none"
+                    className="mt-1 block w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-black dark:focus:border-white focus:outline-none"
                   />
                   {errors.odometer && (
                     <p className="mt-1 text-xs text-red-600 font-medium">{errors.odometer.message}</p>
@@ -445,7 +445,7 @@ export const Vehicles: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-gray-700">
+                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-gray-700 dark:text-gray-300">
                     Acquisition Cost ($)
                   </label>
                   <input
@@ -453,7 +453,7 @@ export const Vehicles: React.FC = () => {
                     step="any"
                     {...register('acquisitionCost', { valueAsNumber: true })}
                     placeholder="e.g. 35000"
-                    className="mt-1 block w-full border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-black focus:outline-none"
+                    className="mt-1 block w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-black dark:focus:border-white focus:outline-none"
                   />
                   {errors.acquisitionCost && (
                     <p className="mt-1 text-xs text-red-600 font-medium">{errors.acquisitionCost.message}</p>
@@ -461,19 +461,17 @@ export const Vehicles: React.FC = () => {
                 </div>
               </div>
 
-
-
-              <div className="flex justify-end gap-2 pt-4 border-t border-gray-200">
+              <div className="flex justify-end gap-2 pt-4 border-t border-gray-200 dark:border-gray-700">
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+                  className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
                 >
                   CANCEL
                 </button>
                 <button
                   type="submit"
-                  className="bg-black px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800"
+                  className="bg-black dark:bg-white px-4 py-2 text-sm font-semibold text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-100"
                 >
                   {editingVehicle ? 'SAVE CHANGES' : 'CREATE VEHICLE'}
                 </button>
