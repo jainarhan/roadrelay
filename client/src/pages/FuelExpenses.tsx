@@ -113,6 +113,8 @@ export const FuelExpenses: React.FC = () => {
     mutationFn: (newFuel: CreateFuelLogInput) => api.post('/fuel-logs', newFuel),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['fuel-logs'] });
+      queryClient.invalidateQueries({ queryKey: ['report-fuel-efficiency'] });
+      queryClient.invalidateQueries({ queryKey: ['report-vehicle-roi'] });
       closeFuelModal();
     },
     onError: (err: ApiError) => {
@@ -124,6 +126,8 @@ export const FuelExpenses: React.FC = () => {
     mutationFn: (newExpense: CreateExpenseInput) => api.post('/expenses', newExpense),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['expenses'] });
+      queryClient.invalidateQueries({ queryKey: ['report-operational-cost'] });
+      queryClient.invalidateQueries({ queryKey: ['report-vehicle-roi'] });
       closeExpenseModal();
     },
     onError: (err: ApiError) => {

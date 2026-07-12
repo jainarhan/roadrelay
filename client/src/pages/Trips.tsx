@@ -93,6 +93,7 @@ export const Trips: React.FC = () => {
     mutationFn: (data: CreateTripInput) => api.post('/trips', data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['trips'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard-summary'] });
       closeCreateModal();
     },
     onError: (err: ApiError) => {
@@ -105,6 +106,9 @@ export const Trips: React.FC = () => {
     mutationFn: (id: string) => api.post(`/trips/${id}/dispatch`, {}),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['trips'] });
+      queryClient.invalidateQueries({ queryKey: ['vehicles'] });
+      queryClient.invalidateQueries({ queryKey: ['drivers'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard-summary'] });
     },
     onError: (err: ApiError) => {
       alert(err.message || 'Failed to dispatch trip');
@@ -116,6 +120,9 @@ export const Trips: React.FC = () => {
     mutationFn: (id: string) => api.post(`/trips/${id}/cancel`, {}),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['trips'] });
+      queryClient.invalidateQueries({ queryKey: ['vehicles'] });
+      queryClient.invalidateQueries({ queryKey: ['drivers'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard-summary'] });
     },
     onError: (err: ApiError) => {
       alert(err.message || 'Failed to cancel trip');
@@ -128,6 +135,13 @@ export const Trips: React.FC = () => {
       api.post(`/trips/${id}/complete`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['trips'] });
+      queryClient.invalidateQueries({ queryKey: ['vehicles'] });
+      queryClient.invalidateQueries({ queryKey: ['drivers'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard-summary'] });
+      queryClient.invalidateQueries({ queryKey: ['report-fuel-efficiency'] });
+      queryClient.invalidateQueries({ queryKey: ['report-fleet-utilization'] });
+      queryClient.invalidateQueries({ queryKey: ['report-operational-cost'] });
+      queryClient.invalidateQueries({ queryKey: ['report-vehicle-roi'] });
       closeCompleteModal();
     },
     onError: (err: ApiError) => {

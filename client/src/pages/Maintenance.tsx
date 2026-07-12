@@ -71,6 +71,9 @@ export const Maintenance: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['maintenance'] });
       queryClient.invalidateQueries({ queryKey: ['vehicles'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard-summary'] });
+      queryClient.invalidateQueries({ queryKey: ['report-fleet-utilization'] });
+      queryClient.invalidateQueries({ queryKey: ['report-operational-cost'] });
       closeModal();
     },
     onError: (err: ApiError) => {
@@ -83,6 +86,9 @@ export const Maintenance: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['maintenance'] });
       queryClient.invalidateQueries({ queryKey: ['vehicles'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard-summary'] });
+      queryClient.invalidateQueries({ queryKey: ['report-fleet-utilization'] });
+      queryClient.invalidateQueries({ queryKey: ['report-operational-cost'] });
     },
     onError: (err: ApiError) => {
       alert(err.message || 'Failed to close maintenance log');

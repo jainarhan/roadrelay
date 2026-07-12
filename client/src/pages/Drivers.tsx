@@ -68,6 +68,7 @@ export const Drivers: React.FC = () => {
       api.patch(`/drivers/${id}`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['drivers'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard-summary'] });
       closeModal();
     },
     onError: (err: ApiError) => {

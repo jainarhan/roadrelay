@@ -55,6 +55,7 @@ export const Vehicles: React.FC = () => {
     mutationFn: (newVehicle: CreateVehicleInput) => api.post('/vehicles', newVehicle),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['vehicles'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard-summary'] });
       closeModal();
     },
     onError: (err: ApiError) => {
@@ -67,6 +68,7 @@ export const Vehicles: React.FC = () => {
       api.patch(`/vehicles/${id}`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['vehicles'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard-summary'] });
       closeModal();
     },
     onError: (err: ApiError) => {
@@ -78,6 +80,7 @@ export const Vehicles: React.FC = () => {
     mutationFn: (id: string) => api.post(`/vehicles/${id}/retire`, {}),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['vehicles'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard-summary'] });
     },
     onError: (err: ApiError) => {
       alert(err.message || 'Failed to retire vehicle');
